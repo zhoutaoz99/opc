@@ -1,0 +1,43 @@
+{
+  "name": "opc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "tsx watch server/index.ts",
+    "dev:client": "vite",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "tsc -p tsconfig.server.json",
+    "build:client": "vite build",
+    "start": "node dist/server/index.js",
+    "seed": "tsx server/seed.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zhoutaoz99/opc.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/zhoutaoz99/opc/issues"
+  },
+  "homepage": "https://github.com/zhoutaoz99/opc#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.21.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/pg": "^8.20.0",
+    "concurrently": "^9.2.1",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14"
+  }
+}

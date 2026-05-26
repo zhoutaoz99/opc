@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>苏州园区一人公司注册 - 任务追踪</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>苏州园区一人公司注册</h1>
+      <p>任务追踪看板 — 基于注册攻略拆解</p>
+    </div>
+
+    <div class="stats-bar" id="statsBar"></div>
+
+    <div class="progress-wrap">
+      <div class="progress-header">
+        <span>总体进度</span>
+        <span class="progress-text" id="progressText">加载中...</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+
+    <div class="filter-bar" id="filterBar"></div>
+    <div id="taskList">
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">正在加载任务...</div>
+      </div>
+    </div>
+
+    <div class="reset-bar">
+      <button class="reset-btn" id="resetBtn">重置所有任务</button>
+    </div>
+  </div>
+
+  <div id="dialogContainer"></div>
+  <div id="confettiContainer" class="confetti-container"></div>
+
+  <script type="module" src="/main.ts"></script>
+</body>
+</html>
