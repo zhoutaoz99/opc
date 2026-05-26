@@ -45,22 +45,45 @@ export function renderTask(t: Task): string {
   `;
 }
 
-export function render(allTasks: Task[], currentFilter: string): void {
-  const phases: Record<string, Task[]> = {};
-  const phaseOrder: { name: string; order: number }[] = [];
+function getPhaseProgress(allTasks: Task[], phaseName: string): { done: number; total: number } {
+  const tasks = allTasks.filter(t => t.phase === phaseName);
+  const done = tasks.filter(t => t.status === 'done').length;
+  return { done, total: tasks.length };
+}
 
-  const filtered = currentFilter === 'all'
-    ? allTasks
-    : allTasks.filter(t => t.status === currentFilter);
-
-  filtered.forEach(t => {
+export function renderPhaseTabs(allTasks: Task[], currentPhase: string): void {
+  const phases: Record<string, { name: string; order: number }> = {};
+  allTasks.forEach(t => {
     if (!phases[t.phase]) {
-      phases[t.phase] = [];
-      phaseOrder.push({ name: t.phase, order: t.phase_order });
+      phases[t.phase] = { name: t.phase, order: t.phase_order };
     }
-    phases[t.phase].push(t);
   });
 
+  const sortedPhases = Object.values(phases).sort((a, b) => a.order - b.order);
+
+  const html = sortedPhases.map(p => {
+    const { done, total } = getPhaseProgress(allTasks, p.name);
+    const isActive = p.name === currentPhase;
+    const pct = total ? Math.round(done / total * 100) : 0;
+    const isCompleted = done === total && total > 0;
+
+    return `
+      <button
+        class="phase-tab ${isActive ? 'active' : ''} ${isCompleted ? 'completed' : ''}"
+        data-phase="${escapeHtml(p.name)}"
+        title="${escapeHtml(p.name)} — ${done}/${total} 完成"
+      >
+        <span class="phase-tab-name">${escapeHtml(p.name)}</span>
+        <span class="phase-tab-progress">${done}/${total}</span>
+        ${isCompleted ? '<span class="phase-tab-check">✓</span>' : ''}
+      </button>
+    `;
+  }).join('');
+
+  document.getElementById('phaseBar')!.innerHTML = html;
+}
+
+export function render(allTasks: Task[], currentFilter: string, currentPhase: string): void {
   const done = allTasks.filter(t => t.status === 'done').length;
   const inProgress = allTasks.filter(t => t.status === 'in-progress').length;
   const pending = allTasks.filter(t => t.status === 'pending').length;
@@ -76,11 +99,23 @@ export function render(allTasks: Task[], currentFilter: string): void {
   document.getElementById('progressFill')!.style.width = pct + '%';
   document.getElementById('progressText')!.textContent = `${pct}%（${done}/${allTasks.length}）`;
 
+  // Phase tabs
+  renderPhaseTabs(allTasks, currentPhase);
+
+  // Phase header inside task list
+  const phaseTasks = allTasks.filter(t => t.phase === currentPhase);
+  const phaseDone = phaseTasks.filter(t => t.status === 'done').length;
+  const phaseTotal = phaseTasks.length;
+
+  const filtered = currentFilter === 'all'
+    ? phaseTasks
+    : phaseTasks.filter(t => t.status === currentFilter);
+
   document.getElementById('filterBar')!.innerHTML = `
-    <button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" data-filter="all">全部 (${allTasks.length})</button>
-    <button class="filter-btn ${currentFilter === 'pending' ? 'active' : ''}" data-filter="pending">待开始 (${pending})</button>
-    <button class="filter-btn ${currentFilter === 'in-progress' ? 'active' : ''}" data-filter="in-progress">进行中 (${inProgress})</button>
-    <button class="filter-btn ${currentFilter === 'done' ? 'active' : ''}" data-filter="done">已完成 (${done})</button>
+    <button class="filter-btn ${currentFilter === 'all' ? 'active' : ''}" data-filter="all">全部 (${phaseTotal})</button>
+    <button class="filter-btn ${currentFilter === 'pending' ? 'active' : ''}" data-filter="pending">待开始 (${phaseTasks.filter(t => t.status === 'pending').length})</button>
+    <button class="filter-btn ${currentFilter === 'in-progress' ? 'active' : ''}" data-filter="in-progress">进行中 (${phaseTasks.filter(t => t.status === 'in-progress').length})</button>
+    <button class="filter-btn ${currentFilter === 'done' ? 'active' : ''}" data-filter="done">已完成 (${phaseTasks.filter(t => t.status === 'done').length})</button>
   `;
 
   const listEl = document.getElementById('taskList')!;
@@ -96,20 +131,13 @@ export function render(allTasks: Task[], currentFilter: string): void {
     return;
   }
 
-  let html = '';
-  phaseOrder.forEach((po, idx) => {
-    const tasks = phases[po.name];
-    const phaseDone = tasks.filter(t => t.status === 'done').length;
-    html += `
-      <div class="phase-section" style="animation-delay: ${idx * 0.05}s">
-        <div class="phase-header">
-          <h2>${po.name}</h2>
-          <span class="phase-badge">${phaseDone}/${tasks.length} 完成</span>
-        </div>
-        ${tasks.map(t => renderTask(t)).join('')}
+  listEl.innerHTML = `
+    <div class="phase-section active">
+      <div class="phase-header">
+        <h2>${escapeHtml(currentPhase)}</h2>
+        <span class="phase-badge">${phaseDone}/${phaseTotal} 完成</span>
       </div>
-    `;
-  });
-
-  listEl.innerHTML = html;
+      ${filtered.map(t => renderTask(t)).join('')}
+    </div>
+  `;
 }

@@ -210,6 +210,87 @@ body {
   100% { left: 100%; }
 }
 
+/* Phase tabs */
+.phase-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.phase-tab {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+  position: relative;
+}
+
+.phase-tab:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.phase-tab.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(91, 76, 219, 0.25);
+}
+
+.phase-tab.active .phase-tab-progress {
+  background: rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.phase-tab.completed:not(.active) {
+  border-color: var(--green);
+  color: var(--green);
+  background: var(--green-bg);
+}
+
+.phase-tab.completed:not(.active):hover {
+  border-color: var(--green-dark);
+  color: var(--green-dark);
+}
+
+.phase-tab-name {
+  font-weight: 600;
+}
+
+.phase-tab-progress {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.phase-tab-check {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.phase-tab.active .phase-tab-check {
+  color: #fff;
+}
+
 /* Filter tabs */
 .filter-bar {
   display: flex;
@@ -1047,7 +1128,12 @@ body {
     flex: 1;
     text-align: center;
   }
-  
+
+  .phase-tab {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+
   .phase-header h2 { font-size: 15px; }
   
   .task-card { padding: 14px; }

@@ -1,14 +1,14 @@
 import type { Task, TaskStatus } from './types';
 import { STATUS_FLOW } from './types';
-import { fetchTasks, updateTask, resetTasks } from './api';
+import { fetchTasks, updateTask } from './api';
 import { render } from './render';
 import { showStatusMenu, closeStatusMenu } from './status';
-import { confirmReset } from './dialog';
 import { triggerConfetti } from './confetti';
 import { openDetail, closeDetail, getCurrentTask } from './detail';
 
 let allTasks: Task[] = [];
 let currentFilter = 'all';
+let currentPhase = '';
 
 // --- Core actions ---
 
@@ -55,19 +55,21 @@ function cancelNotes(taskId: number): void {
   el.classList.add('hidden');
 }
 
-function doReset(): void {
-  resetTasks().then(() => loadTasks());
-}
-
 function setFilter(filter: string): void {
   currentFilter = filter;
+  renderAll();
+}
+
+function setPhase(phase: string): void {
+  currentPhase = phase;
+  currentFilter = 'all';
   renderAll();
 }
 
 // --- Rendering ---
 
 function renderAll(): void {
-  render(allTasks, currentFilter);
+  render(allTasks, currentFilter, currentPhase);
 }
 
 // --- Event delegation ---
@@ -113,7 +115,13 @@ document.getElementById('filterBar')!.addEventListener('click', (e) => {
   if (filter) setFilter(filter);
 });
 
-document.getElementById('resetBtn')!.addEventListener('click', () => confirmReset(doReset));
+document.getElementById('phaseBar')!.addEventListener('click', (e) => {
+  const target = e.target as HTMLElement;
+  const btn = target.closest('.phase-tab') as HTMLElement | null;
+  if (!btn) return;
+  const phase = btn.getAttribute('data-phase');
+  if (phase) setPhase(phase);
+});
 
 document.addEventListener('click', closeStatusMenu);
 
@@ -152,6 +160,30 @@ document.addEventListener('keydown', (e) => {
 async function loadTasks(): Promise<void> {
   try {
     allTasks = await fetchTasks();
+    // Default to the first incomplete phase, or the first phase if all done
+    const phases = new Map<number, string>();
+    allTasks.forEach(t => {
+      if (!phases.has(t.phase_order)) {
+        phases.set(t.phase_order, t.phase);
+      }
+    });
+    const sortedPhaseOrders = Array.from(phases.keys()).sort((a, b) => a - b);
+
+    let defaultPhase = '';
+    for (const order of sortedPhaseOrders) {
+      const phaseName = phases.get(order)!;
+      const tasksInPhase = allTasks.filter(t => t.phase === phaseName);
+      const doneInPhase = tasksInPhase.filter(t => t.status === 'done').length;
+      if (doneInPhase < tasksInPhase.length) {
+        defaultPhase = phaseName;
+        break;
+      }
+    }
+    if (!defaultPhase && sortedPhaseOrders.length > 0) {
+      defaultPhase = phases.get(sortedPhaseOrders[0])!;
+    }
+    currentPhase = defaultPhase;
+    currentFilter = 'all';
     renderAll();
   } catch {
     document.getElementById('taskList')!.innerHTML = `
