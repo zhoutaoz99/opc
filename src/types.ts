@@ -6,6 +6,7 @@ export interface Task {
   phase_order: number;
   title: string;
   description: string | null;
+  details: string | null;
   status: TaskStatus;
   notes: string | null;
   sort_order: number;

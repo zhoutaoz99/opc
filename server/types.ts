@@ -18,6 +18,7 @@ export interface SeedTask {
   phase_order: number;
   title: string;
   description: string;
+  details: string;
   sort_order: number;
 }
 

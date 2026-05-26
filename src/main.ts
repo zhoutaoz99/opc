@@ -5,6 +5,7 @@ import { render } from './render';
 import { showStatusMenu, closeStatusMenu } from './status';
 import { confirmReset } from './dialog';
 import { triggerConfetti } from './confetti';
+import { openDetail, closeDetail, getCurrentTask } from './detail';
 
 let allTasks: Task[] = [];
 let currentFilter = 'all';
@@ -115,6 +116,36 @@ document.getElementById('filterBar')!.addEventListener('click', (e) => {
 document.getElementById('resetBtn')!.addEventListener('click', () => confirmReset(doReset));
 
 document.addEventListener('click', closeStatusMenu);
+
+// --- Detail view ---
+
+function handleDetailUpdate(updated: Task): void {
+  updateTask(updated.id, { notes: updated.notes }).then(saved => {
+    const i = allTasks.findIndex(t => t.id === saved.id);
+    if (i >= 0) allTasks[i] = saved;
+    renderAll();
+  });
+}
+
+document.getElementById('taskList')!.addEventListener('click', (e) => {
+  const target = e.target as HTMLElement;
+  const trigger = target.closest('[data-detail-trigger]') as HTMLElement | null;
+  if (!trigger) return;
+  const card = trigger.closest('.task-card') as HTMLElement;
+  if (!card) return;
+  const taskId = Number(card.getAttribute('data-task-id'));
+  const task = allTasks.find(t => t.id === taskId);
+  if (task) openDetail(task, handleDetailUpdate);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const detailOverlay = document.getElementById('detailOverlay');
+    if (detailOverlay && !detailOverlay.classList.contains('hidden')) {
+      closeDetail();
+    }
+  }
+});
 
 // --- Data loading ---
 

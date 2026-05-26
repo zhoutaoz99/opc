@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS tasks (
   phase_order INTEGER NOT NULL,
   title VARCHAR(500) NOT NULL,
   description TEXT,
+  details TEXT,
   status VARCHAR(20) NOT NULL DEFAULT 'pending',
   notes TEXT,
   sort_order INTEGER NOT NULL,

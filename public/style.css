@@ -782,6 +782,246 @@ body {
 
 .hidden { display: none !important; }
 
+/* Detail overlay */
+.detail-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 150;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  animation: fadeIn 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.detail-panel {
+  max-width: 720px;
+  margin: 40px auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  animation: scaleIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (max-width: 640px) {
+  .detail-panel {
+    margin: 0;
+    border-radius: 0;
+    min-height: 100vh;
+  }
+}
+
+.detail-close-btn {
+  position: sticky;
+  top: 0;
+  float: right;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 22px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s;
+  margin: 12px 12px 0 0;
+}
+
+.detail-close-btn:hover {
+  background: var(--red-bg);
+  color: var(--red);
+}
+
+.detail-content {
+  padding: 24px 28px 32px;
+}
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.detail-phase-badge {
+  font-size: 12px;
+  padding: 3px 12px;
+  border-radius: 12px;
+  background: var(--blue-bg);
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.detail-status {
+  font-size: 12px;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.detail-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  color: var(--text);
+}
+
+.detail-desc {
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+
+.detail-body {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.detail-body h2 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 24px 0 12px;
+  color: var(--accent);
+}
+
+.detail-body h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 20px 0 10px;
+}
+
+.detail-body p {
+  margin: 8px 0;
+}
+
+.detail-body ul, .detail-body ol {
+  margin: 8px 0;
+  padding-left: 24px;
+}
+
+.detail-body li {
+  margin: 6px 0;
+}
+
+.detail-body a {
+  color: var(--blue);
+  text-decoration: none;
+  border-bottom: 1px solid var(--blue-bg);
+  transition: all 0.2s;
+}
+
+.detail-body a:hover {
+  color: var(--blue-dark);
+  border-bottom-color: var(--blue);
+}
+
+.detail-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 12px 0;
+  font-size: 13px;
+}
+
+.detail-body th, .detail-body td {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
+.detail-body th {
+  background: var(--bg);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-secondary);
+}
+
+.detail-body strong {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.detail-body code {
+  background: var(--bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+}
+
+.detail-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* Detail notes section */
+.detail-notes-section {
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.detail-section-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--text);
+}
+
+.detail-textarea {
+  width: 100%;
+  min-height: 80px;
+  background: var(--bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text);
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.detail-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(91, 76, 219, 0.1);
+}
+
+.detail-note-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+/* Clickable task info area */
+[data-detail-trigger] {
+  cursor: pointer;
+}
+
+[data-detail-trigger]:hover .task-title {
+  color: var(--accent);
+}
+
+[data-detail-trigger]:hover .task-desc {
+  color: var(--text);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .container { padding: 16px 14px 60px; }

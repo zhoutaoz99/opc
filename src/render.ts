@@ -20,7 +20,7 @@ export function renderTask(t: Task): string {
     <div class="task-card ${cardClass}" data-task-id="${t.id}">
       <div class="task-top">
         <div class="task-checkbox ${checkClass}" title="点击切换状态"></div>
-        <div class="task-info">
+        <div class="task-info" data-detail-trigger>
           <div class="task-title">${escapeHtml(t.title)}</div>
           <div class="task-desc">${escapeHtml(t.description)}</div>
           ${notesHtml}
